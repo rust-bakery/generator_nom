@@ -2,9 +2,15 @@
 name = "generator_nom"
 version = "0.1.0"
 dependencies = [
+ "circular 0.2.0 (git+https://github.com/sozu-proxy/circular)",
  "flavors 0.2.0 (git+https://github.com/rust-av/flavors)",
  "nom 3.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "circular"
+version = "0.2.0"
+source = "git+https://github.com/sozu-proxy/circular#3f4a7b6c868e7f79069c9b182dd74d0f3dc57b93"
 
 [[package]]
 name = "flavors"
@@ -36,6 +42,7 @@ dependencies = [
 ]
 
 [metadata]
+"checksum circular 0.2.0 (git+https://github.com/sozu-proxy/circular)" = "<none>"
 "checksum flavors 0.2.0 (git+https://github.com/rust-av/flavors)" = "<none>"
 "checksum libc 0.2.30 (registry+https://github.com/rust-lang/crates.io-index)" = "2370ca07ec338939e356443dac2296f581453c35fe1e3a3ed06023c49435f915"
 "checksum memchr 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "1dbccc0e46f1ea47b9f17e6d67c5a96bd27030519c519c9c91327e31275a47b4"

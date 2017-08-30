@@ -6,3 +6,4 @@ authors = ["Geoffroy Couprie <geo.couprie@gmail.com>"]
 [dependencies]
 nom = "^3"
 flavors = { git = "https://github.com/rust-av/flavors" }
+circular = { git = "https://github.com/sozu-proxy/circular" }
