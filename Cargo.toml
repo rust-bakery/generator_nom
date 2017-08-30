@@ -1,0 +1,8 @@
+[package]
+name = "generator_nom"
+version = "0.1.0"
+authors = ["Geoffroy Couprie <geo.couprie@gmail.com>"]
+
+[dependencies]
+nom = "^3"
+flavors = { git = "https://github.com/rust-av/flavors" }
