@@ -1,5 +1,10 @@
 use flavors;
-use flavors::parser::{CodecId,FrameType,SoundFormat,SoundRate,SoundSize,SoundType,TagHeader};
+use flavors::parser::{complete_tag,CodecId,FrameType,SoundFormat,SoundRate,SoundSize,SoundType,TagHeader};
+use nom::be_u32;
+
+named!(pub flv_tag<flavors::parser::Tag>,
+  terminated!(complete_tag, be_u32)
+);
 
 #[derive(Clone,Debug,PartialEq,Eq)]
 pub struct Tag {
