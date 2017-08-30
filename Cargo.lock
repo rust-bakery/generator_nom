@@ -9,7 +9,7 @@ dependencies = [
 [[package]]
 name = "flavors"
 version = "0.2.0"
-source = "git+https://github.com/rust-av/flavors#af0b9bebf8923ae33a81309aba9111e91a27f4bb"
+source = "git+https://github.com/rust-av/flavors#a210b1205dd85e5679d132435f2955c72e08f78d"
 dependencies = [
  "nom 3.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

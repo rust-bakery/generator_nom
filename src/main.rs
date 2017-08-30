@@ -7,7 +7,18 @@ use std::cmp::min;
 use std::fs::File;
 use std::io::{BufRead,BufReader,Write};
 use nom::{HexDisplay,IResult,Offset};
-use flavors::parser::header;
+
+mod types;
+
+use types::*;
+
+#[derive(Clone,Copy,Debug,PartialEq,Eq)]
+pub struct MyTagHeader {
+  pub tag_type:  TagType,
+  pub data_size: u32,
+  pub timestamp: u32,
+  pub stream_id: u32,
+}
 
 fn main() {
   let mut args = env::args();
