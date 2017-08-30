@@ -25,16 +25,20 @@ fn run(filename: &str) -> std::io::Result<()> {
 
   let length = {
     let buf = reader.fill_buf()?;
-    println!("data:\n{}", (&buf[..min(buf.len(), 128)]).to_hex(16));
+    println!("data({} bytes):\n{}", buf.len(), (&buf[..min(buf.len(), 128)]).to_hex(16));
     let res = header(buf);
-    println!("header: {:?}", res);
+    //println!("header: {:?}", res);
     if let IResult::Done(remaining, h) = res {
+      println!("parsed header: {:#?}", h);
       buf.offset(remaining)
     } else {
       panic!("couldn't parse header");
     }
   };
 
+  println!("consumed {} bytes", length);
   reader.consume(length);
+  let buf = reader.fill_buf()?;
+  println!("data after consume and fill_buff ({} bytes):\n{}", buf.len(), (&buf[..min(buf.len(), 128)]).to_hex(16));
   Ok(())
 }
