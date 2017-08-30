@@ -11,7 +11,7 @@ use std::io::Read;
 use std::ops::{Generator, GeneratorState};
 
 use flavors::parser::header;
-use nom::{HexDisplay,IResult,Offset};
+use nom::{HexDisplay,IResult,Needed,Offset};
 use circular::Buffer;
 
 mod types;
@@ -71,7 +71,7 @@ fn run(filename: &str) -> std::io::Result<()> {
   let mut generator = move || {
     // we will count the number of tag and use that and return value for the generator
     let mut tag_count = 0usize;
-    let mut consumed = length;
+    let mut consumed  = length;
 
     // this is the data reading loop. On each iteration we will read more data, then try to parse
     // it in the inner loop
@@ -89,6 +89,8 @@ fn run(filename: &str) -> std::io::Result<()> {
         break;
       }
 
+      let needed: Option<Needed>;
+
       // this is the parsing loop. After we read some data, we will try to parse from it until
       // we get an error or the parser returns `Incomplete`, indicating it needs more data
       loop {
@@ -103,8 +105,10 @@ fn run(filename: &str) -> std::io::Result<()> {
 
             // `Incomplete` means the nom parser does not have enough data to decide,
             // so we wait for the next refill and then retry parsing
-            IResult::Incomplete(needed) => {
-              println!("not enough data, needs a refill: {:?}", needed);
+            IResult::Incomplete(n) => {
+              println!("not enough data, needs a refill: {:?}", n);
+
+              needed = Some(n);
               break;
             },
 
@@ -137,12 +141,16 @@ fn run(filename: &str) -> std::io::Result<()> {
         yield tag;
       }
 
-      // if the buffer has no more space to write too, it might be time to grow the internal buffer
-      if b.available_space() == 0 {
-        println!("growing buffer capacity from {} bytes to {} bytes", capacity, capacity*2);
+      // if the parser returned `Incomplete`, and it needs more data than the buffer can hold,
+      // we grow the buffer. In a more realistic code, you would define a maximal size to which
+      // the buffer can grow, instead of letting the input data drive your programm into OOM death
+      if let Some(Needed::Size(sz)) = needed {
+        if sz > b.capacity() {
+          println!("growing buffer capacity from {} bytes to {} bytes", capacity, capacity*2);
 
-        capacity *= 2;
-        b.grow(capacity);
+          capacity *= 2;
+          b.grow(capacity);
+        }
       }
     }
 
