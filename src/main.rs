@@ -2,6 +2,39 @@
 extern crate nom;
 extern crate flavors;
 
+use std::env;
+use std::cmp::min;
+use std::fs::File;
+use std::io::{BufRead,BufReader,Write};
+use nom::{HexDisplay,IResult,Offset};
+use flavors::parser::header;
+
 fn main() {
-    println!("Hello, world!");
+  let mut args = env::args();
+  let path = args.next().expect("first arg is program path");
+  let filename = args.next().expect("please pass a file path as first argument");
+
+  println!("filename: {}", path);
+  println!("filename: {}", filename);
+  run(&filename).expect("should parse file correctly");
+}
+
+fn run(filename: &str) -> std::io::Result<()> {
+  let mut file = File::open(filename)?;
+  let mut reader = BufReader::new(file);
+
+  let length = {
+    let buf = reader.fill_buf()?;
+    println!("data:\n{}", (&buf[..min(buf.len(), 128)]).to_hex(16));
+    let res = header(buf);
+    println!("header: {:?}", res);
+    if let IResult::Done(remaining, h) = res {
+      buf.offset(remaining)
+    } else {
+      panic!("couldn't parse header");
+    }
+  };
+
+  reader.consume(length);
+  Ok(())
 }
