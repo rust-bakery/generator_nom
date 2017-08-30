@@ -37,7 +37,7 @@ fn main() {
 
 fn run(filename: &str) -> std::io::Result<()> {
   let mut file = File::open(filename)?;
-  let mut reader = BufReader::new(file);
+  let mut reader = BufReader::with_capacity(20000, file);
 
   let length = {
     let buf = reader.fill_buf()?;
@@ -65,7 +65,8 @@ fn run(filename: &str) -> std::io::Result<()> {
     loop {
       let (length,tag) = {
         let buf = reader.fill_buf().expect("should fill buf");
-        println!("data({} bytes, consumed {}):\n{}", buf.len(), consumed, (&buf[..min(buf.len(), 128)]).to_hex(16));
+        println!("[{}] data({} bytes, consumed {}):\n{}", tag_count,
+          buf.len(), consumed, (&buf[..min(buf.len(), 128)]).to_hex(16));
 
         if buf.len() == 0 {
           break;
@@ -82,12 +83,6 @@ fn run(filename: &str) -> std::io::Result<()> {
           IResult::Done(remaining, tag) => {
             tag_count += 1;
             let t = Tag::new(tag);
-            /*let t = MyTagHeader {
-              tag_type: tag.tag_type,
-              data_size: tag.data_size,
-              timestamp: tag.timestamp,
-              stream_id: tag.stream_id,
-            };*/
             (buf.offset(remaining), t)
           },
         }
